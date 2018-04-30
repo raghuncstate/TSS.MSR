@@ -7,18 +7,18 @@ import tss.*;
 
 //>>>
 /**
-* This command performs RSA decryption using the indicated padding scheme according to IETF RFC 3447 ((PKCS#1).
+* This command performs RSA decryption using the indicated padding scheme according to IETF RFC 8017 ((PKCS#1).
 */
 public class TPM2_RSA_Decrypt_REQUEST extends TpmStructure
 {
     /**
-    * This command performs RSA decryption using the indicated padding scheme according to IETF RFC 3447 ((PKCS#1).
-    * 
-    * @param _keyHandle RSA key to use for decryption Auth Index: 1 Auth Role: USER 
-    * @param _cipherText cipher text to be decrypted NOTE An encrypted RSA data block is the size of the public modulus. 
-    * @param _inScheme the padding scheme to use if scheme associated with keyHandle is TPM_ALG_NULL (One of TPMS_KEY_SCHEME_ECDH, TPMS_KEY_SCHEME_ECMQV, TPMS_SIG_SCHEME_RSASSA, TPMS_SIG_SCHEME_RSAPSS, TPMS_SIG_SCHEME_ECDSA, TPMS_SIG_SCHEME_ECDAA, TPMS_SIG_SCHEME_SM2, TPMS_SIG_SCHEME_ECSCHNORR, TPMS_ENC_SCHEME_RSAES, TPMS_ENC_SCHEME_OAEP, TPMS_SCHEME_HASH, TPMS_NULL_ASYM_SCHEME) 
-    * @param _label label whose association with the message is to be verified
-    */
+     * This command performs RSA decryption using the indicated padding scheme according to IETF RFC 8017 ((PKCS#1).
+     * 
+     * @param _keyHandle RSA key to use for decryption Auth Index: 1 Auth Role: USER 
+     * @param _cipherText cipher text to be decrypted NOTE An encrypted RSA data block is the size of the public modulus. 
+     * @param _inScheme the padding scheme to use if scheme associated with keyHandle is TPM_ALG_NULL (One of TPMS_KEY_SCHEME_ECDH, TPMS_KEY_SCHEME_ECMQV, TPMS_SIG_SCHEME_RSASSA, TPMS_SIG_SCHEME_RSAPSS, TPMS_SIG_SCHEME_ECDSA, TPMS_SIG_SCHEME_ECDAA, TPMS_SIG_SCHEME_SM2, TPMS_SIG_SCHEME_ECSCHNORR, TPMS_ENC_SCHEME_RSAES, TPMS_ENC_SCHEME_OAEP, TPMS_SCHEME_HASH, TPMS_NULL_ASYM_SCHEME) 
+     * @param _label label whose association with the message is to be verified
+     */
     public TPM2_RSA_Decrypt_REQUEST(TPM_HANDLE _keyHandle,byte[] _cipherText,TPMU_ASYM_SCHEME _inScheme,byte[] _label)
     {
         keyHandle = _keyHandle;
@@ -27,7 +27,7 @@ public class TPM2_RSA_Decrypt_REQUEST extends TpmStructure
         label = _label;
     }
     /**
-    * This command performs RSA decryption using the indicated padding scheme according to IETF RFC 3447 ((PKCS#1).
+    * This command performs RSA decryption using the indicated padding scheme according to IETF RFC 8017 ((PKCS#1).
     */
     public TPM2_RSA_Decrypt_REQUEST() {};
     /**
@@ -79,12 +79,13 @@ public class TPM2_RSA_Decrypt_REQUEST extends TpmStructure
     {
         keyHandle.toTpm(buf);
         buf.writeInt((cipherText!=null)?cipherText.length:0, 2);
-        buf.write(cipherText);
+        if(cipherText!=null)
+            buf.write(cipherText);
         buf.writeInt(GetUnionSelector_inScheme(), 2);
         ((TpmMarshaller)inScheme).toTpm(buf);
         buf.writeInt((label!=null)?label.length:0, 2);
-        buf.write(label);
-        return;
+        if(label!=null)
+            buf.write(label);
     }
     @Override
     public void initFromTpm(InByteBuf buf)
@@ -107,7 +108,7 @@ public class TPM2_RSA_Decrypt_REQUEST extends TpmStructure
         else if(_inSchemeScheme==TPM_ALG_ID.OAEP.toInt()) {inScheme = new TPMS_ENC_SCHEME_OAEP();}
         else if(_inSchemeScheme==TPM_ALG_ID.ANY.toInt()) {inScheme = new TPMS_SCHEME_HASH();}
         else if(_inSchemeScheme==TPM_ALG_ID.NULL.toInt()) {inScheme = new TPMS_NULL_ASYM_SCHEME();}
-        if(inScheme==null)throw new RuntimeException("Unexpected type selector");
+        if(inScheme==null)throw new RuntimeException("Unexpected type selector " + TPM_ALG_ID.fromInt(_inSchemeScheme).name());
         inScheme.initFromTpm(buf);
         int _labelSize = buf.readInt(2);
         label = new byte[_labelSize];

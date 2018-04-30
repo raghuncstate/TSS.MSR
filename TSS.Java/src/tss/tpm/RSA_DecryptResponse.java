@@ -7,21 +7,21 @@ import tss.*;
 
 //>>>
 /**
-* This command performs RSA decryption using the indicated padding scheme according to IETF RFC 3447 ((PKCS#1).
+* This command performs RSA decryption using the indicated padding scheme according to IETF RFC 8017 ((PKCS#1).
 */
 public class RSA_DecryptResponse extends TpmStructure
 {
     /**
-    * This command performs RSA decryption using the indicated padding scheme according to IETF RFC 3447 ((PKCS#1).
-    * 
-    * @param _message decrypted output
-    */
+     * This command performs RSA decryption using the indicated padding scheme according to IETF RFC 8017 ((PKCS#1).
+     * 
+     * @param _message decrypted output
+     */
     public RSA_DecryptResponse(byte[] _message)
     {
         message = _message;
     }
     /**
-    * This command performs RSA decryption using the indicated padding scheme according to IETF RFC 3447 ((PKCS#1).
+    * This command performs RSA decryption using the indicated padding scheme according to IETF RFC 8017 ((PKCS#1).
     */
     public RSA_DecryptResponse() {};
     /**
@@ -36,8 +36,8 @@ public class RSA_DecryptResponse extends TpmStructure
     public void toTpm(OutByteBuf buf) 
     {
         buf.writeInt((message!=null)?message.length:0, 2);
-        buf.write(message);
-        return;
+        if(message!=null)
+            buf.write(message);
     }
     @Override
     public void initFromTpm(InByteBuf buf)

@@ -12,10 +12,10 @@ import tss.*;
 public class SignResponse extends TpmStructure
 {
     /**
-    * This command causes the TPM to sign an externally provided hash with the specified symmetric or asymmetric signing key.
-    * 
-    * @param _signature the signature (One of TPMS_SIGNATURE_RSASSA, TPMS_SIGNATURE_RSAPSS, TPMS_SIGNATURE_ECDSA, TPMS_SIGNATURE_ECDAA, TPMS_SIGNATURE_SM2, TPMS_SIGNATURE_ECSCHNORR, TpmHash, TPMS_SCHEME_HASH, TPMS_NULL_SIGNATURE)
-    */
+     * This command causes the TPM to sign an externally provided hash with the specified symmetric or asymmetric signing key.
+     * 
+     * @param _signature the signature (One of TPMS_SIGNATURE_RSASSA, TPMS_SIGNATURE_RSAPSS, TPMS_SIGNATURE_ECDSA, TPMS_SIGNATURE_ECDAA, TPMS_SIGNATURE_SM2, TPMS_SIGNATURE_ECSCHNORR, TpmHash, TPMS_SCHEME_HASH, TPMS_NULL_SIGNATURE)
+     */
     public SignResponse(TPMU_SIGNATURE _signature)
     {
         signature = _signature;
@@ -50,7 +50,6 @@ public class SignResponse extends TpmStructure
     {
         buf.writeInt(GetUnionSelector_signature(), 2);
         ((TpmMarshaller)signature).toTpm(buf);
-        return;
     }
     @Override
     public void initFromTpm(InByteBuf buf)
@@ -66,7 +65,7 @@ public class SignResponse extends TpmStructure
         // code generator workaround BUGBUG >> (probChild)else if(_signatureSigAlg==TPM_ALG_ID.HMAC.toInt()) {signature = new TPMT_HA();}
         else if(_signatureSigAlg==TPM_ALG_ID.ANY.toInt()) {signature = new TPMS_SCHEME_HASH();}
         else if(_signatureSigAlg==TPM_ALG_ID.NULL.toInt()) {signature = new TPMS_NULL_SIGNATURE();}
-        if(signature==null)throw new RuntimeException("Unexpected type selector");
+        if(signature==null)throw new RuntimeException("Unexpected type selector " + TPM_ALG_ID.fromInt(_signatureSigAlg).name());
         signature.initFromTpm(buf);
     }
     @Override

@@ -12,10 +12,10 @@ import tss.*;
 public class TPMT_KEYEDHASH_SCHEME extends TpmStructure
 {
     /**
-    * This structure is used for a hash signing object.
-    * 
-    * @param _details the scheme parameters (One of TPMS_SCHEME_HMAC, TPMS_SCHEME_XOR, TPMS_NULL_SCHEME_KEYEDHASH)
-    */
+     * This structure is used for a hash signing object.
+     * 
+     * @param _details the scheme parameters (One of TPMS_SCHEME_HMAC, TPMS_SCHEME_XOR, TPMS_NULL_SCHEME_KEYEDHASH)
+     */
     public TPMT_KEYEDHASH_SCHEME(TPMU_SCHEME_KEYEDHASH _details)
     {
         details = _details;
@@ -44,7 +44,6 @@ public class TPMT_KEYEDHASH_SCHEME extends TpmStructure
     {
         buf.writeInt(GetUnionSelector_details(), 2);
         ((TpmMarshaller)details).toTpm(buf);
-        return;
     }
     @Override
     public void initFromTpm(InByteBuf buf)
@@ -54,7 +53,7 @@ public class TPMT_KEYEDHASH_SCHEME extends TpmStructure
         if(_scheme==TPM_ALG_ID.HMAC.toInt()) {details = new TPMS_SCHEME_HMAC();}
         else if(_scheme==TPM_ALG_ID.XOR.toInt()) {details = new TPMS_SCHEME_XOR();}
         else if(_scheme==TPM_ALG_ID.NULL.toInt()) {details = new TPMS_NULL_SCHEME_KEYEDHASH();}
-        if(details==null)throw new RuntimeException("Unexpected type selector");
+        if(details==null)throw new RuntimeException("Unexpected type selector " + TPM_ALG_ID.fromInt(_scheme).name());
         details.initFromTpm(buf);
     }
     @Override

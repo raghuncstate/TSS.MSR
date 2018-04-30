@@ -12,11 +12,11 @@ import tss.*;
 public class QuoteResponse extends TpmStructure
 {
     /**
-    * This command is used to quote PCR values.
-    * 
-    * @param _quoted the quoted information 
-    * @param _signature the signature over quoted (One of TPMS_SIGNATURE_RSASSA, TPMS_SIGNATURE_RSAPSS, TPMS_SIGNATURE_ECDSA, TPMS_SIGNATURE_ECDAA, TPMS_SIGNATURE_SM2, TPMS_SIGNATURE_ECSCHNORR, TpmHash, TPMS_SCHEME_HASH, TPMS_NULL_SIGNATURE)
-    */
+     * This command is used to quote PCR values.
+     * 
+     * @param _quoted the quoted information 
+     * @param _signature the signature over quoted (One of TPMS_SIGNATURE_RSASSA, TPMS_SIGNATURE_RSAPSS, TPMS_SIGNATURE_ECDSA, TPMS_SIGNATURE_ECDAA, TPMS_SIGNATURE_SM2, TPMS_SIGNATURE_ECSCHNORR, TpmHash, TPMS_SCHEME_HASH, TPMS_NULL_SIGNATURE)
+     */
     public QuoteResponse(TPMS_ATTEST _quoted,TPMU_SIGNATURE _signature)
     {
         quoted = _quoted;
@@ -59,10 +59,10 @@ public class QuoteResponse extends TpmStructure
     public void toTpm(OutByteBuf buf) 
     {
         buf.writeInt((quoted!=null)?quoted.toTpm().length:0, 2);
-        quoted.toTpm(buf);
+        if(quoted!=null)
+            quoted.toTpm(buf);
         buf.writeInt(GetUnionSelector_signature(), 2);
         ((TpmMarshaller)signature).toTpm(buf);
-        return;
     }
     @Override
     public void initFromTpm(InByteBuf buf)
@@ -82,7 +82,7 @@ public class QuoteResponse extends TpmStructure
         // code generator workaround BUGBUG >> (probChild)else if(_signatureSigAlg==TPM_ALG_ID.HMAC.toInt()) {signature = new TPMT_HA();}
         else if(_signatureSigAlg==TPM_ALG_ID.ANY.toInt()) {signature = new TPMS_SCHEME_HASH();}
         else if(_signatureSigAlg==TPM_ALG_ID.NULL.toInt()) {signature = new TPMS_NULL_SIGNATURE();}
-        if(signature==null)throw new RuntimeException("Unexpected type selector");
+        if(signature==null)throw new RuntimeException("Unexpected type selector " + TPM_ALG_ID.fromInt(_signatureSigAlg).name());
         signature.initFromTpm(buf);
     }
     @Override

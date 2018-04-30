@@ -1,11 +1,9 @@
-﻿/*++
+﻿/* 
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See the LICENSE file in the project root for full license information.
+ */
 
-Copyright (c) 2010-2017 Microsoft Corporation
-Microsoft Confidential
-
-*/
 using System;
-using System.Globalization;
 using System.Resources;
 using System.Diagnostics;
 using System.Reflection;
@@ -79,6 +77,11 @@ namespace Tpm2Lib
                     return false;
             }
             return true;
+        }
+
+        public static bool IsOneOf<T>(T val, params T[] set)
+        {
+            return set.Contains(val);
         }
 
         public static byte[] HostToNet(object o)
@@ -1282,7 +1285,7 @@ namespace Tpm2Lib
         {
             if (Enabled)
             {
-                Console.WriteLine(CurIndent + format, args);
+                Debug.WriteLine(CurIndent + format, args);
             }
         }
 

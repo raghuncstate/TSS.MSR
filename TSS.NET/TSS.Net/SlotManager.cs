@@ -1,9 +1,8 @@
-﻿/*++
+﻿/* 
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See the LICENSE file in the project root for full license information.
+ */
 
-Copyright (c) 2010-2017 Microsoft Corporation
-Microsoft Confidential
-
-*/
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -171,8 +170,7 @@ namespace Tpm2Lib
 
                 if (cc == TpmCc.ContextLoad || cc == TpmCc.ContextSave)
                 {
-                    //throw new Exception("ContextLoad and ContextSave not supported in this build");
-                    Console.Error.WriteLine("ContextLoad and ContextSave not supported in this build");
+                    Debug.WriteLine("ContextLoad and ContextSave are not supported in this build");
                     outBuf = Marshaller.GetTpmRepresentation(new Object[] {
                         TpmSt.NoSessions,
                         (uint)10,
@@ -208,7 +206,7 @@ namespace Tpm2Lib
                 // the objects array may contain session handles. In this case the session
                 // handles loaded by the invocation of LoadEntities for neededObjects
                 // may be evicted again during the subsequent call for neededSessions.
-                var expectedResponses = Tpm._ExpectedResponses();
+                var expectedResponses = Tpm._GetExpectedResponses();
                 if (!LoadEntities(neededEntities))
                 {
                     throw new Exception("Failed to make space for objects or sessions");
@@ -402,9 +400,13 @@ namespace Tpm2Lib
                 {
                     message = "{S3-abort}";
                 }
+#if WINDOWS_UWP
+                Debug.WriteLine(message);
+#else
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.Error.Write(message);
                 Console.ResetColor();
+#endif
                 StateSaveAndReload(s3, (NumStateSaves % 2 == 0));
                 NumStateSaves++;
             }
@@ -569,7 +571,7 @@ namespace Tpm2Lib
                            .FlushContext(o.TheTpmHandle);
                         if (!Tpm._LastCommandSucceeded())
                         {
-                            Console.WriteLine("TRM failed to flush a handle: {0:X8}", o.TheTpmHandle);
+                            Debug.WriteLine("TRM failed to flush a handle: {0:X8}", o.TheTpmHandle);
                         }
                         o.Loaded = false;
                     }
@@ -670,14 +672,14 @@ namespace Tpm2Lib
             var ctx = ContextManager.GetOldestSavedSession();
             if (ctx == null || ctx.Context.sequence == firstCtxSeqNum)
             {
-                Console.WriteLine("FAILED to FIND sess ctx to re-save: {0}", ctx);
+                Debug.WriteLine("FAILED to FIND sess ctx to re-save: {0}", ctx);
                 return 0;
             }
             ctx.TheTpmHandle = Tpm._AllowErrors()
                                     .ContextLoad(ctx.Context);
             if (!Tpm._LastCommandSucceeded())
             {
-                Console.WriteLine("FAILED for RE-LOAD sess ctx to re-save: {0}", Tpm._GetLastResponseCode());
+                Debug.WriteLine("FAILED for RE-LOAD sess ctx to re-save: {0}", Tpm._GetLastResponseCode());
                 return 0;
             }
 
@@ -685,7 +687,7 @@ namespace Tpm2Lib
                                 .ContextSave(ctx.TheTpmHandle);
             if (!Tpm._LastCommandSucceeded())
             {
-                Console.WriteLine("FAILED for RE-SAVE re-loaded sess ctx: {0}", Tpm._GetLastResponseCode());
+                Debug.WriteLine("FAILED for RE-SAVE re-loaded sess ctx: {0}", Tpm._GetLastResponseCode());
                 ctx.Loaded = true;
                 return 0;
             }
@@ -718,7 +720,7 @@ namespace Tpm2Lib
 
                 if (Tpm._GetLastResponseCode() != TpmRc.ContextGap)
                 {
-                    Console.WriteLine("MakeSpace: ContextSave FAILED: {0}", Tpm._GetLastResponseCode());
+                    Debug.WriteLine("MakeSpace: ContextSave FAILED: {0}", Tpm._GetLastResponseCode());
                     return false;
                 }
 
@@ -933,9 +935,30 @@ namespace Tpm2Lib
                     Tbs.TpmDevice.Connect();
             }
 
+            public override void Close()
+            {
+                lock (Tbs)
+                    Tbs.TpmDevice.Close();
+            }
+
             public override bool PlatformAvailable()
             {
                 return Tbs.TpmDevice.PlatformAvailable();
+            }
+
+            public override bool PowerCtlAvailable()
+            {
+                return Tbs.TpmDevice.PowerCtlAvailable();
+            }
+
+            public override bool LocalityCtlAvailable()
+            {
+                return Tbs.TpmDevice.LocalityCtlAvailable();
+            }
+
+            public override bool NvCtlAvailable()
+            {
+                return Tbs.TpmDevice.NvCtlAvailable();
             }
 
             public override void PowerCycle()

@@ -12,11 +12,11 @@ import tss.*;
 public class GetCapabilityResponse extends TpmStructure
 {
     /**
-    * This command returns various information regarding the TPM and its current state.
-    * 
-    * @param _moreData flag to indicate if there are more values of this type 
-    * @param _capabilityData the capability data (One of TPML_ALG_PROPERTY, TPML_HANDLE, TPML_CCA, TPML_CC, TPML_CC, TPML_PCR_SELECTION, TPML_TAGGED_TPM_PROPERTY, TPML_TAGGED_PCR_PROPERTY, TPML_ECC_CURVE, TPML_TAGGED_POLICY)
-    */
+     * This command returns various information regarding the TPM and its current state.
+     * 
+     * @param _moreData flag to indicate if there are more values of this type 
+     * @param _capabilityData the capability data (One of TPML_ALG_PROPERTY, TPML_HANDLE, TPML_CCA, TPML_CC, TPML_CC, TPML_PCR_SELECTION, TPML_TAGGED_TPM_PROPERTY, TPML_TAGGED_PCR_PROPERTY, TPML_ECC_CURVE, TPML_TAGGED_POLICY)
+     */
     public GetCapabilityResponse(byte _moreData,TPMU_CAPABILITIES _capabilityData)
     {
         moreData = _moreData;
@@ -58,7 +58,6 @@ public class GetCapabilityResponse extends TpmStructure
         buf.write(moreData);
         buf.writeInt(GetUnionSelector_capabilityData(), 4);
         ((TpmMarshaller)capabilityData).toTpm(buf);
-        return;
     }
     @Override
     public void initFromTpm(InByteBuf buf)
@@ -76,7 +75,7 @@ public class GetCapabilityResponse extends TpmStructure
         else if(_capabilityDataCapability==TPM_CAP.PCR_PROPERTIES.toInt()) {capabilityData = new TPML_TAGGED_PCR_PROPERTY();}
         else if(_capabilityDataCapability==TPM_CAP.ECC_CURVES.toInt()) {capabilityData = new TPML_ECC_CURVE();}
         else if(_capabilityDataCapability==TPM_CAP.AUTH_POLICIES.toInt()) {capabilityData = new TPML_TAGGED_POLICY();}
-        if(capabilityData==null)throw new RuntimeException("Unexpected type selector");
+        if(capabilityData==null)throw new RuntimeException("Unexpected type selector " + TPM_ALG_ID.fromInt(_capabilityDataCapability).name());
         capabilityData.initFromTpm(buf);
     }
     @Override

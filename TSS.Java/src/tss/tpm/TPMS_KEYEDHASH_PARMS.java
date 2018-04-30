@@ -12,10 +12,10 @@ import tss.*;
 public class TPMS_KEYEDHASH_PARMS extends TpmStructure implements TPMU_PUBLIC_PARMS 
 {
     /**
-    * This structure describes the parameters that would appear in the public area of a KEYEDHASH object.
-    * 
-    * @param _scheme Indicates the signing method used for a keyedHash signing object. This field also determines the size of the data field for a data object created with TPM2_Create() or TPM2_CreatePrimary(). (One of TPMS_SCHEME_HMAC, TPMS_SCHEME_XOR, TPMS_NULL_SCHEME_KEYEDHASH)
-    */
+     * This structure describes the parameters that would appear in the public area of a KEYEDHASH object.
+     * 
+     * @param _scheme Indicates the signing method used for a keyedHash signing object. This field also determines the size of the data field for a data object created with TPM2_Create() or TPM2_CreatePrimary(). (One of TPMS_SCHEME_HMAC, TPMS_SCHEME_XOR, TPMS_NULL_SCHEME_KEYEDHASH)
+     */
     public TPMS_KEYEDHASH_PARMS(TPMU_SCHEME_KEYEDHASH _scheme)
     {
         scheme = _scheme;
@@ -44,7 +44,6 @@ public class TPMS_KEYEDHASH_PARMS extends TpmStructure implements TPMU_PUBLIC_PA
     {
         buf.writeInt(GetUnionSelector_scheme(), 2);
         ((TpmMarshaller)scheme).toTpm(buf);
-        return;
     }
     @Override
     public void initFromTpm(InByteBuf buf)
@@ -54,7 +53,7 @@ public class TPMS_KEYEDHASH_PARMS extends TpmStructure implements TPMU_PUBLIC_PA
         if(_schemeScheme==TPM_ALG_ID.HMAC.toInt()) {scheme = new TPMS_SCHEME_HMAC();}
         else if(_schemeScheme==TPM_ALG_ID.XOR.toInt()) {scheme = new TPMS_SCHEME_XOR();}
         else if(_schemeScheme==TPM_ALG_ID.NULL.toInt()) {scheme = new TPMS_NULL_SCHEME_KEYEDHASH();}
-        if(scheme==null)throw new RuntimeException("Unexpected type selector");
+        if(scheme==null)throw new RuntimeException("Unexpected type selector " + TPM_ALG_ID.fromInt(_schemeScheme).name());
         scheme.initFromTpm(buf);
     }
     @Override

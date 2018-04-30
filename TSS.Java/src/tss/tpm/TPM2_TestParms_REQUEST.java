@@ -12,10 +12,10 @@ import tss.*;
 public class TPM2_TestParms_REQUEST extends TpmStructure
 {
     /**
-    * This command is used to check to see if specific combinations of algorithm parameters are supported.
-    * 
-    * @param _parameters algorithm parameters to be validated (One of TPMS_KEYEDHASH_PARMS, TPMS_SYMCIPHER_PARMS, TPMS_RSA_PARMS, TPMS_ECC_PARMS, TPMS_ASYM_PARMS)
-    */
+     * This command is used to check to see if specific combinations of algorithm parameters are supported.
+     * 
+     * @param _parameters algorithm parameters to be validated (One of TPMS_KEYEDHASH_PARMS, TPMS_SYMCIPHER_PARMS, TPMS_RSA_PARMS, TPMS_ECC_PARMS, TPMS_ASYM_PARMS)
+     */
     public TPM2_TestParms_REQUEST(TPMU_PUBLIC_PARMS _parameters)
     {
         parameters = _parameters;
@@ -46,7 +46,6 @@ public class TPM2_TestParms_REQUEST extends TpmStructure
     {
         buf.writeInt(GetUnionSelector_parameters(), 2);
         ((TpmMarshaller)parameters).toTpm(buf);
-        return;
     }
     @Override
     public void initFromTpm(InByteBuf buf)
@@ -58,7 +57,7 @@ public class TPM2_TestParms_REQUEST extends TpmStructure
         else if(_parametersType==TPM_ALG_ID.RSA.toInt()) {parameters = new TPMS_RSA_PARMS();}
         else if(_parametersType==TPM_ALG_ID.ECC.toInt()) {parameters = new TPMS_ECC_PARMS();}
         else if(_parametersType==TPM_ALG_ID.ANY.toInt()) {parameters = new TPMS_ASYM_PARMS();}
-        if(parameters==null)throw new RuntimeException("Unexpected type selector");
+        if(parameters==null)throw new RuntimeException("Unexpected type selector " + TPM_ALG_ID.fromInt(_parametersType).name());
         parameters.initFromTpm(buf);
     }
     @Override

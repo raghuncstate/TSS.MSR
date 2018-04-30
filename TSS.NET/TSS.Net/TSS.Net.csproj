@@ -1,12 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <TargetFrameworks>netstandard1.3;net46</TargetFrameworks>
-    <DefineConstants>TRACE;DEBUG;TSS_USE_BCRYPT;NETFX_CORE;NETSTANDARD1_3;TSS_NO_STACK</DefineConstants>
+    <TargetFrameworks>netstandard2.0;net46;netcoreapp2.0</TargetFrameworks>
     <AssemblyName>TSS.Net</AssemblyName>
     <PackageId>TSS.Net</PackageId>
-    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -15,37 +13,27 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.1.0</Version>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.1.0" />
-    <PackageReference Include="System.Security.Cryptography.Cng" Version="4.2.0" />
-    <PackageReference Include="System.Security.Cryptography.Csp" Version="4.0.0" />
-    <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
-    <PackageReference Include="System.Net.NameResolution" Version="4.0.0" />
-    <PackageReference Include="System.Collections.NonGeneric" Version="4.0.1" />
-    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.1.1" />
-    <PackageReference Include="System.Runtime.Serialization.Xml" Version="4.1.1" />
-    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
-  </ItemGroup>
+  <PropertyGroup Condition=" '$(RuntimeIdentifier)' != 'linux-x64' ">
+    <DefineConstants>TRACE;DEBUG;TSS_USE_BCRYPT;NETFX_CORE;TSS_NO_STACK</DefineConstants>
+  </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <PackageReference Include="System.Runtime.Numerics" Version="4.0.1" />
-    <PackageReference Include="System.Xml.XmlSerializer" Version="4.0.11" />
-    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.0.2" />
-  </ItemGroup>
+  <PropertyGroup Condition=" '$(RuntimeIdentifier)' == 'linux-x64' Or '$(OS)' == 'Unix'  Or '$(OS)' == 'Linux'">
+    <!-- 
+    To build, use:
+       dotnet build TSS.Net.csproj -r linux-x64 -f netcoreapp2.0 -c Release 
+     -->
+    <DefineConstants>__MonoCS__;TRACE;DEBUG;TSS_NO_STACK</DefineConstants>
+  </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'uap10.0' ">
-    <PackageReference Include="System.Runtime.Numerics" Version="4.0.1" />
-    <PackageReference Include="System.Xml.XmlSerializer" Version="4.0.11" />
-    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.0.2" />
-  </ItemGroup>
+  <!-- delay sign the assembly for Release build -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <AssemblyOriginatorKeyFile>..\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>true</DelaySign>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
 
 </Project>

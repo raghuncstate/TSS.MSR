@@ -1,12 +1,12 @@
-﻿/*++
+﻿/* 
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See the LICENSE file in the project root for full license information.
+ */
 
-Copyright (c) 2010-2017 Microsoft Corporation
-Microsoft Confidential
-
-*/
 using System;
+#if !TSS_NO_STACK
 using System.Diagnostics;
-using System.Runtime.Serialization;
+#endif
 
 namespace Tpm2Lib
 {

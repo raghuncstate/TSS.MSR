@@ -12,11 +12,11 @@ import tss.*;
 public class GetCommandAuditDigestResponse extends TpmStructure
 {
     /**
-    * This command returns the current value of the command audit digest, a digest of the commands being audited, and the audit hash algorithm. These values are placed in an attestation structure and signed with the key referenced by signHandle.
-    * 
-    * @param _auditInfo the auditInfo that was signed 
-    * @param _signature the signature over auditInfo (One of TPMS_SIGNATURE_RSASSA, TPMS_SIGNATURE_RSAPSS, TPMS_SIGNATURE_ECDSA, TPMS_SIGNATURE_ECDAA, TPMS_SIGNATURE_SM2, TPMS_SIGNATURE_ECSCHNORR, TpmHash, TPMS_SCHEME_HASH, TPMS_NULL_SIGNATURE)
-    */
+     * This command returns the current value of the command audit digest, a digest of the commands being audited, and the audit hash algorithm. These values are placed in an attestation structure and signed with the key referenced by signHandle.
+     * 
+     * @param _auditInfo the auditInfo that was signed 
+     * @param _signature the signature over auditInfo (One of TPMS_SIGNATURE_RSASSA, TPMS_SIGNATURE_RSAPSS, TPMS_SIGNATURE_ECDSA, TPMS_SIGNATURE_ECDAA, TPMS_SIGNATURE_SM2, TPMS_SIGNATURE_ECSCHNORR, TpmHash, TPMS_SCHEME_HASH, TPMS_NULL_SIGNATURE)
+     */
     public GetCommandAuditDigestResponse(TPMS_ATTEST _auditInfo,TPMU_SIGNATURE _signature)
     {
         auditInfo = _auditInfo;
@@ -59,10 +59,10 @@ public class GetCommandAuditDigestResponse extends TpmStructure
     public void toTpm(OutByteBuf buf) 
     {
         buf.writeInt((auditInfo!=null)?auditInfo.toTpm().length:0, 2);
-        auditInfo.toTpm(buf);
+        if(auditInfo!=null)
+            auditInfo.toTpm(buf);
         buf.writeInt(GetUnionSelector_signature(), 2);
         ((TpmMarshaller)signature).toTpm(buf);
-        return;
     }
     @Override
     public void initFromTpm(InByteBuf buf)
@@ -82,7 +82,7 @@ public class GetCommandAuditDigestResponse extends TpmStructure
         // code generator workaround BUGBUG >> (probChild)else if(_signatureSigAlg==TPM_ALG_ID.HMAC.toInt()) {signature = new TPMT_HA();}
         else if(_signatureSigAlg==TPM_ALG_ID.ANY.toInt()) {signature = new TPMS_SCHEME_HASH();}
         else if(_signatureSigAlg==TPM_ALG_ID.NULL.toInt()) {signature = new TPMS_NULL_SIGNATURE();}
-        if(signature==null)throw new RuntimeException("Unexpected type selector");
+        if(signature==null)throw new RuntimeException("Unexpected type selector " + TPM_ALG_ID.fromInt(_signatureSigAlg).name());
         signature.initFromTpm(buf);
     }
     @Override

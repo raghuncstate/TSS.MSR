@@ -1,20 +1,14 @@
-﻿/*++
+﻿/* 
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See the LICENSE file in the project root for full license information.
+ */
 
-Copyright (c) 2010-2017 Microsoft Corporation
-Microsoft Confidential
-
-*/
 using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Reflection;
-using System.IO;
-using System.Xml.Serialization;
-using System.Xml;
-using System.Xml.Schema;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 #if LEGACY_SERIALIZATION
 using System.Runtime.Serialization.Formatters.Soap;
 #endif // LEGACY_SERIALIZATION
